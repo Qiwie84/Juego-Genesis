@@ -180,8 +180,8 @@ canvas.addEventListener('touchmove', (e) => {
     mouseY = e.touches[0].clientY;
 });
 
-// Generar enemigos cada 200ms (la mitad de rápido que antes)
-setInterval(generateEnemy, 200);
+// Generar enemigos cada 00ms (la mitad de rápido que antes)
+setInterval(generateEnemy, 100);
 
 // Esperar que las imágenes se carguen antes de iniciar el juego
 let imagesLoaded = 0;
