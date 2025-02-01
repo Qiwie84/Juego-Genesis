@@ -197,6 +197,14 @@ const incrementImageLoadCount = () => {
     }
 };
 
+// Espera una interacción del usuario para comenzar la música
+document.addEventListener('click', function() {
+    const musica = document.getElementById('background-music');
+    musica.play();
+});
+
+
+
 playerImage.onload = incrementImageLoadCount;
 bulletImage.onload = incrementImageLoadCount;
 enemyImage.onload = incrementImageLoadCount;
