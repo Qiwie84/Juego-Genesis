@@ -211,11 +211,11 @@
             isMoving = false;
         });
     
-        // Disparo automático mientras se mueve
+        // Disparo automático mientras se mueve, reduciendo la velocidad de disparo a la mitad
         function shootBullet() {
             setInterval(() => {
                 bullets.push({ x: player.x + player.width / 2 - 25, y: player.y, width: 50, height: 50 });
-            }, 100);
+            }, 200); // Aumentamos el intervalo a 200ms (antes era 100)
         }
     
         // Generar enemigos cada 100ms
