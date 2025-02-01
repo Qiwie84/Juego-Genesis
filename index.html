@@ -26,7 +26,8 @@
     </style>
 </head>
 <body>
-    <audio autoplay>
+    <!-- Reproducción automática de música -->
+    <audio autoplay loop>
         <source src="imgs/musica.mp3" type="audio/mpeg">
         Tu navegador no soporta la etiqueta de audio.
     </audio>
@@ -36,7 +37,7 @@
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
-
+    
         // Configuración de la pantalla
         const resizeCanvas = () => {
             const width = window.innerWidth;
@@ -46,7 +47,7 @@
         };
         window.addEventListener("resize", resizeCanvas);
         resizeCanvas();
-
+    
         // Cargar imágenes
         const playerImage = new Image();
         playerImage.src = 'imgs/messi.png'; 
@@ -54,7 +55,7 @@
         bulletImage.src = 'imgs/corazón.png'; 
         const enemyImage = new Image();
         enemyImage.src = 'imgs/antonela.png';
-
+    
         // Jugador
         const player = {
             x: canvas.width / 2 - 30,
@@ -63,37 +64,37 @@
             height: 60,
             speed: 15
         };
-
+    
         // Bala
         const bullets = [];
         const bulletSpeed = 10;
-
+    
         // Enemigos
         const enemies = [];
         const enemySpeed = 5;
-
+    
         // Contador de eliminaciones
         let killCount = 0;
-
-        // Variables para el control de teclas y el movimiento
+    
+        // Variables para el control de los movimientos táctiles
         let touchStartX = 0;
+        let touchEndX = 0;
         let isMoving = false;
-
+    
         // Función para actualizar el juego
         function updateGame() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Mover jugador (si está tocando o clickeando)
+    
+            // Mover jugador con el desplazamiento táctil
             if (isMoving) {
-                const moveSpeed = 15;
-                if (touchStartX < player.x && player.x > 0) {
-                    player.x -= moveSpeed;
-                }
-                if (touchStartX > player.x && player.x < canvas.width - player.width) {
-                    player.x += moveSpeed;
-                }
+                const deltaX = touchEndX - touchStartX; // Diferencia en la posición del dedo
+                player.x += deltaX;
+    
+                // Limitar el movimiento del jugador dentro del canvas
+                if (player.x < 0) player.x = 0;
+                if (player.x > canvas.width - player.width) player.x = canvas.width - player.width;
             }
-
+    
             // Mover balas
             for (let i = 0; i < bullets.length; i++) {
                 bullets[i].y -= bulletSpeed;
@@ -102,7 +103,7 @@
                     i--;
                 }
             }
-
+    
             // Mover enemigos
             for (let i = 0; i < enemies.length; i++) {
                 enemies[i].y += enemySpeed;
@@ -111,7 +112,7 @@
                     i--;
                 }
             }
-
+    
             // Colisiones
             for (let i = 0; i < bullets.length; i++) {
                 for (let j = 0; j < enemies.length; j++) {
@@ -124,7 +125,7 @@
                     }
                 }
             }
-
+    
             // Colisión jugador-enemigos
             for (let i = 0; i < enemies.length; i++) {
                 if (isCollision(player, enemies[i])) {
@@ -133,7 +134,7 @@
                     break;
                 }
             }
-
+    
             // Dibujar todo
             ctx.drawImage(playerImage, player.x, player.y, player.width, player.height);
             for (let i = 0; i < bullets.length; i++) {
@@ -142,15 +143,15 @@
             for (let i = 0; i < enemies.length; i++) {
                 ctx.drawImage(enemyImage, enemies[i].x, enemies[i].y, 60, 60);
             }
-
+    
             // Mostrar el contador de eliminaciones
             ctx.font = "30px Arial";
             ctx.fillStyle = "white";
             ctx.fillText("Eliminaciones: " + killCount, 20, 40);
-
+    
             requestAnimationFrame(updateGame);
         }
-
+    
         // Detectar colisión
         function isCollision(obj1, obj2) {
             return obj1.x < obj2.x + obj2.width &&
@@ -158,13 +159,13 @@
                    obj1.y < obj2.y + obj2.height &&
                    obj1.y + obj1.height > obj2.y;
         }
-
+    
         // Generar enemigos aleatorios
         function generateEnemy() {
             const x = Math.random() * (canvas.width - 60);
             enemies.push({ x, y: 0, width: 60, height: 60 });
         }
-
+    
         // Iniciar el juego
         function resetGame() {
             player.x = canvas.width / 2 - 30;
@@ -173,7 +174,7 @@
             bullets.length = 0;
             killCount = 0;
         }
-
+    
         // Control táctil o clic
         canvas.addEventListener('mousedown', (e) => {
             e.preventDefault();
@@ -181,33 +182,47 @@
             isMoving = true;
             shootBullet();
         });
-
+    
         canvas.addEventListener('mousemove', (e) => {
             if (isMoving) {
-                touchStartX = e.clientX;
+                touchEndX = e.clientX;
             }
         });
-
+    
         canvas.addEventListener('mouseup', () => {
             isMoving = false;
         });
-
+    
+        // Detectar el movimiento táctil
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            touchStartX = e.touches[0].clientX;
+            isMoving = true;
+            shootBullet();
+        });
+    
+        canvas.addEventListener('touchmove', (e) => {
+            if (isMoving) {
+                touchEndX = e.touches[0].clientX;
+            }
+        });
+    
+        canvas.addEventListener('touchend', () => {
+            isMoving = false;
+        });
+    
         // Disparo automático mientras se mueve
         function shootBullet() {
             setInterval(() => {
                 bullets.push({ x: player.x + player.width / 2 - 25, y: player.y, width: 50, height: 50 });
             }, 100);
         }
-
+    
         // Generar enemigos cada 100ms
         setInterval(generateEnemy, 100);
-
+    
         // Empezar el juego
         updateGame();
-
-
-        
     </script>
-    
 </body>
 </html>
