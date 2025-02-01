@@ -26,23 +26,24 @@
     </style>
 </head>
 <body>
-    <!-- Reproducción automática de música -->
-    <audio id="background-music" loop autoplay muted>
-        <source src="imgs/musica.mp3" type="audio/mp3">
-    </audio>
-    
-    <script>
-        document.addEventListener('click', function() {
-            const musica = document.getElementById('background-music');
-            musica.muted = false; // Desactiva el mute al hacer clic
-            musica.play(); // Reproduce la música
-        });
-    </script>
-    
     
     <canvas id="gameCanvas"></canvas>
 
+    <!-- Agregar audio que se reproduce automáticamente -->
+    <audio id="miAudio" autoplay>
+        <source src="imgs/musica.mp3" type="audio/mpeg">
+        Tu navegador no soporta el formato de audio.
+    </audio>
+
     <!-- Enlazar el archivo de JavaScript -->
     <script src="script.js"></script>
+
+    <script>
+        // Esperar a que la página cargue completamente
+        window.onload = function() {
+            var audio = document.getElementById('miAudio');
+            audio.play(); // Asegurarse de que el audio se reproduce
+        };
+    </script>
 </body>
 </html>
