@@ -27,9 +27,17 @@
 </head>
 <body>
     <!-- Reproducción automática de música -->
-    <audio id="background-music" loop>
+    <audio id="background-music" loop autoplay muted>
         <source src="imgs/musica.mp3" type="audio/mp3">
     </audio>
+    
+    <script>
+        document.addEventListener('click', function() {
+            const musica = document.getElementById('background-music');
+            musica.muted = false; // Desactiva el mute al hacer clic
+            musica.play(); // Reproduce la música
+        });
+    </script>
     
     
     <canvas id="gameCanvas"></canvas>
