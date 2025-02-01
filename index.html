@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disparando ❤️ con Sandreke</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #f9f9f9;
+        }
+        canvas {
+            display: block;
+            background-image: url('imgs/fondo_amor.jpg'); /* Coloca la URL de la imagen */
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Configuración de la pantalla
+        const width = 700;
+        const height = 775;
+        canvas.width = width;
+        canvas.height = height;
+
+        // Cargar imágenes
+        const playerImage = new Image();
+        playerImage.src = 'imgs/messi.png'; // Cambia la URL según sea necesario
+        const bulletImage = new Image();
+        bulletImage.src = 'imgs/corazón.png'; // Cambia la URL según sea necesario
+        const enemyImage = new Image();
+        enemyImage.src = 'imgs/antonela.png'; // Cambia la URL según sea necesario
+
+        // Jugador
+        const player = {
+            x: width / 2 - 30,
+            y: height - 60,
+            width: 60,
+            height: 60,
+            speed: 15
+        };
+
+        // Bala
+        const bullets = [];
+        const bulletSpeed = 10;
+
+        // Enemigos
+        const enemies = [];
+        const enemySpeed = 5;
+
+        // Variables para el control de teclas y el movimiento
+        let touchStartX = 0;
+        let isMoving = false;
+        let shootInterval = 500;  // Tiempo entre disparos en milisegundos
+        let shootSpeedDecrement = 10; // Reducción de tiempo entre disparos cada segundo
+
+        // Función para actualizar el juego
+        function updateGame() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Mover jugador (si está tocando o clickeando)
+            if (isMoving) {
+                const moveSpeed = 15;
+                if (touchStartX < player.x && player.x > 0) {
+                    player.x -= moveSpeed; // Mover a la izquierda
+                }
+                if (touchStartX > player.x && player.x < width - player.width) {
+                    player.x += moveSpeed; // Mover a la derecha
+                }
+            }
+
+            // Mover balas
+            for (let i = 0; i < bullets.length; i++) {
+                bullets[i].y -= bulletSpeed;
+                if (bullets[i].y < 0) {
+                    bullets.splice(i, 1);
+                    i--;
+                }
+            }
+
+            // Mover enemigos
+            for (let i = 0; i < enemies.length; i++) {
+                enemies[i].y += enemySpeed;
+                if (enemies[i].y > height) {
+                    enemies.splice(i, 1);
+                    i--;
+                }
+            }
+
+            // Colisiones
+            for (let i = 0; i < bullets.length; i++) {
+                for (let j = 0; j < enemies.length; j++) {
+                    if (isCollision(bullets[i], enemies[j])) {
+                        bullets.splice(i, 1);
+                        enemies.splice(j, 1);
+                        i--;
+                        break;
+                    }
+                }
+            }
+
+            // Colisión jugador-enemigos
+            for (let i = 0; i < enemies.length; i++) {
+                if (isCollision(player, enemies[i])) {
+                    alert("¡Perdiste!");
+                    resetGame();
+                    break;
+                }
+            }
+
+            // Dibujar todo
+            ctx.drawImage(playerImage, player.x, player.y, player.width, player.height);
+            for (let i = 0; i < bullets.length; i++) {
+                ctx.drawImage(bulletImage, bullets[i].x, bullets[i].y, 50, 50);
+            }
+            for (let i = 0; i < enemies.length; i++) {
+                ctx.drawImage(enemyImage, enemies[i].x, enemies[i].y, 60, 60);
+            }
+
+            requestAnimationFrame(updateGame);
+        }
+
+        // Detectar colisión
+        function isCollision(obj1, obj2) {
+            return obj1.x < obj2.x + obj2.width &&
+                   obj1.x + obj1.width > obj2.x &&
+                   obj1.y < obj2.y + obj2.height &&
+                   obj1.y + obj1.height > obj2.y;
+        }
+
+        // Generar enemigos aleatorios
+        function generateEnemy() {
+            const x = Math.random() * (width - 60);
+            enemies.push({ x, y: 0, width: 60, height: 60 });
+        }
+
+        // Iniciar el juego
+        function resetGame() {
+            player.x = width / 2 - 30;
+            player.y = height - 60;
+            enemies.length = 0;
+            bullets.length = 0;
+            shootInterval = 500;  // Reiniciar tiempo de disparo
+        }
+
+        // Control táctil o clic
+        canvas.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            touchStartX = e.clientX;
+            isMoving = true;
+            startShooting();
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (isMoving) {
+                touchStartX = e.clientX;
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isMoving = false;
+            stopShooting();
+        });
+
+        // Empezar a disparar
+        let shootingInterval;
+        function startShooting() {
+            shootingInterval = setInterval(() => {
+                bullets.push({ x: player.x + 20, y: player.y, width: 50, height: 50 });
+                if (shootInterval > 100) {
+                    shootInterval -= shootSpeedDecrement;  // Acelerar disparo
+                }
+            }, shootInterval);  // Disparo con intervalo variable
+        }
+
+        // Detener disparos
+        function stopShooting() {
+            clearInterval(shootingInterval);
+        }
+
+        // Generar enemigos cada 100ms
+        setInterval(generateEnemy, 100);
+
+        // Empezar el juego
+        updateGame();
+    </script>
+</body>
+</html>
