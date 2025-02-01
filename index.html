@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta property="og:title" content="Genesis" />
-        <meta property="og:description" content="Juego" />
-        <meta property="og:image" content="https://img.freepik.com/psd-gratis/renderizacion-3d-diseno-icono-juego-retro_23-2151866415.jpg?t=st=1738435989~exp=1738439589~hmac=5c9835b2881958744a51343cb81df968f9a4e1349b6f48f5b6f8be0ad104a663&w=826" />
-        <meta property="og:url" content="https://juego-genesis-l3335it9b-emir-qis-projects.vercel.app/" />
-        <meta property="og:type" content="website" />
-        <link rel="icon" href="imgs/logo.png" type="image/x-icon">
+    <meta property="og:description" content="Juego" />
+    <meta property="og:image" content="https://img.freepik.com/psd-gratis/renderizacion-3d-diseno-icono-juego-retro_23-2151866415.jpg?t=st=1738435989~exp=1738439589~hmac=5c9835b2881958744a51343cb81df968f9a4e1349b6f48f5b6f8be0ad104a663&w=826" />
+    <meta property="og:url" content="https://juego-genesis-l3335it9b-emir-qis-projects.vercel.app/" />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="imgs/logo.png" type="image/x-icon">
     <title>Juego</title>
     <style>
         body {
@@ -19,8 +19,9 @@
         }
         canvas {
             display: block;
-            background-image: url('imgs/fondo_amor.jpg'); /* Coloca la URL de la imagen */
+            background-image: url('imgs/fondo_amor.jpg');
             background-size: cover;
+            touch-action: none; /* Para evitar el zoom en dispositivos móviles */
         }
     </style>
 </head>
@@ -28,31 +29,36 @@
     <audio autoplay>
         <source src="imgs/musica.mp3" type="audio/mpeg">
         Tu navegador no soporta la etiqueta de audio.
-      </audio>
-      
+    </audio>
+    
     <canvas id="gameCanvas"></canvas>
+
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
 
         // Configuración de la pantalla
-        const width = window.innerWidth;  // Ancho de la pantalla completa
-        const height = window.innerHeight;  // Alto de la pantalla completa
-        canvas.width = width;
-        canvas.height = height;
+        const resizeCanvas = () => {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        };
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
 
         // Cargar imágenes
         const playerImage = new Image();
-        playerImage.src = 'imgs/messi.png'; // Cambia la URL según sea necesario
+        playerImage.src = 'imgs/messi.png'; 
         const bulletImage = new Image();
-        bulletImage.src = 'imgs/corazón.png'; // Cambia la URL según sea necesario
+        bulletImage.src = 'imgs/corazón.png'; 
         const enemyImage = new Image();
-        enemyImage.src = 'imgs/antonela.png'; // Cambia la URL según sea necesario
+        enemyImage.src = 'imgs/antonela.png';
 
         // Jugador
         const player = {
-            x: width / 2 - 30,
-            y: height - 60,
+            x: canvas.width / 2 - 30,
+            y: canvas.height - 60,
             width: 60,
             height: 60,
             speed: 15
@@ -75,16 +81,16 @@
 
         // Función para actualizar el juego
         function updateGame() {
-            ctx.clearRect(0, 0, width, height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Mover jugador (si está tocando o clickeando)
             if (isMoving) {
                 const moveSpeed = 15;
                 if (touchStartX < player.x && player.x > 0) {
-                    player.x -= moveSpeed; // Mover a la izquierda
+                    player.x -= moveSpeed;
                 }
-                if (touchStartX > player.x && player.x < width - player.width) {
-                    player.x += moveSpeed; // Mover a la derecha
+                if (touchStartX > player.x && player.x < canvas.width - player.width) {
+                    player.x += moveSpeed;
                 }
             }
 
@@ -100,7 +106,7 @@
             // Mover enemigos
             for (let i = 0; i < enemies.length; i++) {
                 enemies[i].y += enemySpeed;
-                if (enemies[i].y > height) {
+                if (enemies[i].y > canvas.height) {
                     enemies.splice(i, 1);
                     i--;
                 }
@@ -112,7 +118,7 @@
                     if (isCollision(bullets[i], enemies[j])) {
                         bullets.splice(i, 1);
                         enemies.splice(j, 1);
-                        killCount++; // Incrementa el contador de eliminaciones
+                        killCount++;
                         i--;
                         break;
                     }
@@ -137,10 +143,10 @@
                 ctx.drawImage(enemyImage, enemies[i].x, enemies[i].y, 60, 60);
             }
 
-            // Mostrar el contador de eliminaciones en la pantalla
+            // Mostrar el contador de eliminaciones
             ctx.font = "30px Arial";
             ctx.fillStyle = "white";
-            ctx.fillText("Eliminaciones: " + killCount, 20, 40); // Muestra el contador en la esquina superior izquierda
+            ctx.fillText("Eliminaciones: " + killCount, 20, 40);
 
             requestAnimationFrame(updateGame);
         }
@@ -155,17 +161,17 @@
 
         // Generar enemigos aleatorios
         function generateEnemy() {
-            const x = Math.random() * (width - 60);
+            const x = Math.random() * (canvas.width - 60);
             enemies.push({ x, y: 0, width: 60, height: 60 });
         }
 
         // Iniciar el juego
         function resetGame() {
-            player.x = width / 2 - 30;
-            player.y = height - 60;
+            player.x = canvas.width / 2 - 30;
+            player.y = canvas.height - 60;
             enemies.length = 0;
             bullets.length = 0;
-            killCount = 0; // Resetea el contador de eliminaciones
+            killCount = 0;
         }
 
         // Control táctil o clic
@@ -182,7 +188,7 @@
             }
         });
 
-        canvas.addEventListener('mouseup', (e) => {
+        canvas.addEventListener('mouseup', () => {
             isMoving = false;
         });
 
@@ -190,7 +196,7 @@
         function shootBullet() {
             setInterval(() => {
                 bullets.push({ x: player.x + player.width / 2 - 25, y: player.y, width: 50, height: 50 });
-            }, 100);  // Dispara cada 100ms, lo que equivale a 10 balas por segundo
+            }, 100);
         }
 
         // Generar enemigos cada 100ms
@@ -198,6 +204,10 @@
 
         // Empezar el juego
         updateGame();
+
+
+        
     </script>
+    
 </body>
 </html>
