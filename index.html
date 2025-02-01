@@ -9,6 +9,7 @@
     <meta property="og:url" content="https://juego-genesis-l3335it9b-emir-qis-projects.vercel.app/" />
     <meta property="og:type" content="website" />
     <link rel="icon" href="imgs/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="css/style.css">
     <title>Juego</title>
     <style>
         body {
@@ -23,27 +24,26 @@
             background-size: cover;
             touch-action: none; /* Para evitar el zoom en dispositivos móviles */
         }
+
+        /* Estilo para ocultar el reproductor de audio */
+        #audio {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    
     <canvas id="gameCanvas"></canvas>
 
     <!-- Agregar audio que se reproduce automáticamente -->
-    <audio id="miAudio" autoplay>
-        <source src="imgs/musica.mp3" type="audio/mpeg">
-        Tu navegador no soporta el formato de audio.
+    <audio id="audio" preload="auto">
+        <source src="imgs/musica.mp3" type="audio/mp3">
+        Tu navegador no soporta el elemento de audio.
     </audio>
 
-    <!-- Enlazar el archivo de JavaScript -->
-    <script src="script.js"></script>
+    <!-- Botón invisible para permitir la reproducción del audio -->
+    <div id="playButton" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; cursor: pointer;"></div>
 
-    <script>
-        // Esperar a que la página cargue completamente
-        window.onload = function() {
-            var audio = document.getElementById('miAudio');
-            audio.play(); // Asegurarse de que el audio se reproduce
-        };
-    </script>
+    <script src="script.js"></script>
 </body>
+
 </html>
