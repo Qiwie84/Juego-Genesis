@@ -11,6 +11,7 @@ const resizeCanvas = () => {
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
+
 // Cargar imágenes
 const playerImage = new Image();
 playerImage.src = 'imgs/messi.png';
@@ -143,8 +144,16 @@ function isCollision(obj1, obj2) {
 // Generar enemigos aleatorios
 function generateEnemy() {
     const x = Math.random() * (canvas.width - 60);
-    enemies.push({ x, y: 0, width: 60, height: 60 });
+    enemies.push({ 
+        x, 
+        y: 0, 
+        width: 60, // Ancho de la imagen de Antonella
+        height: 60,
+        imageWidth: 60, // Ancho original
+        imageHeight: 60 // Altura original
+    });
 }
+
 
 // Iniciar el juego
 function resetGame() {
@@ -173,8 +182,9 @@ canvas.addEventListener('touchmove', (e) => {
     mouseY = e.touches[0].clientY;
 });
 
-// Generar enemigos cada 100ms
-setInterval(generateEnemy, 100);
+// Generar enemigos cada 200ms (la mitad de rápido que antes)
+setInterval(generateEnemy, 200);
+
 
 // Esperar que las imágenes se carguen antes de iniciar el juego
 let imagesLoaded = 0;
