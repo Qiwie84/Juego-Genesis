@@ -194,30 +194,20 @@ const incrementImageLoadCount = () => {
     }
 };
 
-// Obtener el audio
-const audio = document.getElementById('miAudio');
-let isAudioPlaying = false;
 
-// Función para reproducir el audio si no se está reproduciendo
-function playAudio() {
-    if (!isAudioPlaying) {
-        audio.play();
-        isAudioPlaying = true;
-    }
-}
 
-// Llamar a la función para reproducir la música
-window.onload = function() {
-    playAudio(); // Asegúrate de que se reproduce al cargar
-};
-
-// Agregar esta parte para verificar si el audio se ha detenido por algún motivo
-canvas.addEventListener('click', () => {
-    if (audio.paused) {
-        playAudio(); // Reproducir si el audio se pausó
-    }
+// Esperar a que el usuario haga clic/tocar para permitir la reproducción de audio
+document.getElementById('playButton').addEventListener('click', function() {
+    var audio = document.getElementById('audio');
+    audio.play(); // Reproducir música al hacer clic/tocar en el área
+    document.getElementById('playButton').style.display = 'none'; // Ocultar el área una vez clickeado
 });
 
+// Reproducir la música al cargar la página (después de la interacción del usuario)
+window.onload = function() {
+    var audio = document.getElementById('audio');
+    audio.play();
+};
 
 playerImage.onload = incrementImageLoadCount;
 bulletImage.onload = incrementImageLoadCount;
