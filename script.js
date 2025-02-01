@@ -11,7 +11,6 @@ const resizeCanvas = () => {
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
-
 // Cargar imágenes
 const playerImage = new Image();
 playerImage.src = 'imgs/messi.png';
@@ -154,7 +153,6 @@ function generateEnemy() {
     });
 }
 
-
 // Iniciar el juego
 function resetGame() {
     player.x = canvas.width / 2 - 30;
@@ -185,7 +183,6 @@ canvas.addEventListener('touchmove', (e) => {
 // Generar enemigos cada 200ms (la mitad de rápido que antes)
 setInterval(generateEnemy, 200);
 
-
 // Esperar que las imágenes se carguen antes de iniciar el juego
 let imagesLoaded = 0;
 const totalImages = 3;
@@ -197,12 +194,29 @@ const incrementImageLoadCount = () => {
     }
 };
 
-// Espera una interacción del usuario para comenzar la música
-document.addEventListener('click', function() {
-    const musica = document.getElementById('background-music');
-    musica.play();
-});
+// Obtener el audio
+const audio = document.getElementById('miAudio');
+let isAudioPlaying = false;
 
+// Función para reproducir el audio si no se está reproduciendo
+function playAudio() {
+    if (!isAudioPlaying) {
+        audio.play();
+        isAudioPlaying = true;
+    }
+}
+
+// Llamar a la función para reproducir la música
+window.onload = function() {
+    playAudio(); // Asegúrate de que se reproduce al cargar
+};
+
+// Agregar esta parte para verificar si el audio se ha detenido por algún motivo
+canvas.addEventListener('click', () => {
+    if (audio.paused) {
+        playAudio(); // Reproducir si el audio se pausó
+    }
+});
 
 
 playerImage.onload = incrementImageLoadCount;
