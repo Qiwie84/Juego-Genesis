@@ -15,7 +15,7 @@ resizeCanvas();
 const playerImage = new Image();
 playerImage.src = 'imgs/messi.png';
 const bulletImage = new Image();
-bulletImage.src = 'imgs/corazón.png'; 
+bulletImage.src = 'imgs/corazón.png'; // Imagen de la bala
 const enemyImage = new Image();
 enemyImage.src = 'imgs/antonela.png';
 
@@ -37,10 +37,18 @@ let killCount = 0;
 // Variables de control del movimiento
 let mouseX = canvas.width / 2;
 let mouseY = canvas.height / 2;
-let isShooting = false; // Para detectar si el mouse está presionado o si el dedo está tocando la pantalla
+
+// Variables de balas
+const bullets = [];
+
+// Variables de intervalo de disparo
+let bulletInterval = 125; // 125 ms = 8 balas por segundo
+let lastBulletTime = 0;
 
 // Actualizar juego (sin delay)
 function updateGame() {
+    const currentTime = Date.now();
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Mover al jugador con el mouse o el toque táctil
@@ -82,15 +90,16 @@ function updateGame() {
     ctx.fillStyle = "white";
     ctx.fillText("Eliminaciones: " + killCount, 20, 40);
 
-    // Si está disparando, crear una bala
-    if (isShooting) {
+    // Disparo automático
+    if (currentTime - lastBulletTime >= bulletInterval) {
         const bullet = {
             x: player.x + player.width / 2 - 25,
-            y: player.y,
+            y: player.y - 20, // 20 píxeles por encima de Messi
             width: 50,
             height: 50
         };
         bullets.push(bullet);
+        lastBulletTime = currentTime;
     }
 
     // Mover balas
@@ -113,6 +122,11 @@ function updateGame() {
                 break;
             }
         }
+    }
+
+    // Dibujar las balas (corazón.png)
+    for (let i = 0; i < bullets.length; i++) {
+        ctx.drawImage(bulletImage, bullets[i].x, bullets[i].y, bullets[i].width, bullets[i].height);
     }
 
     requestAnimationFrame(updateGame);
@@ -146,31 +160,17 @@ canvas.addEventListener('mousemove', (e) => {
     mouseY = e.clientY;
 });
 
-// Control con el mouse para disparar
-canvas.addEventListener('mousedown', () => {
-    isShooting = true;
-});
-
-canvas.addEventListener('mouseup', () => {
-    isShooting = false;
-});
-
-// Control táctil para mover y disparar
+// Control táctil para mover
 canvas.addEventListener('touchstart', (e) => {
     e.preventDefault();
     mouseX = e.touches[0].clientX;
     mouseY = e.touches[0].clientY;
-    isShooting = true; // Activar disparo al tocar la pantalla
 });
 
 canvas.addEventListener('touchmove', (e) => {
     e.preventDefault();
     mouseX = e.touches[0].clientX;
     mouseY = e.touches[0].clientY;
-});
-
-canvas.addEventListener('touchend', () => {
-    isShooting = false; // Desactivar disparo cuando se levanta el dedo
 });
 
 // Generar enemigos cada 100ms
